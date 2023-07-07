@@ -37,9 +37,9 @@ public slots:
     void setup();
     bool isV4l2LoopbackInstalled();
     bool isV4l2Enabled();
-    void enableV4l2();
     void updateVirtualFrame(const QImage& image);
     void configureVirtualCamera();
+    void stop();
 
 private:
     bool detectDummyVideoDevice();
@@ -48,6 +48,7 @@ private:
     bool enabled;
     bool cameraDetected;
     cv::Mat QImageToCvMat(const QImage &image);
+    QProcess processPipeline;
 };
 
 #endif // VIRTUALCAMERA_H

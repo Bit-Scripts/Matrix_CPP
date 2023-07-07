@@ -36,7 +36,6 @@ private:
     int cameraId;
     int frameWidth;
     int frameHeight;
-    bool running;
 };
 
 #endif // CAMERA_H

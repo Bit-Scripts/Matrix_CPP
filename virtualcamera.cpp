@@ -9,19 +9,8 @@ void VirtualCamera::setup()
     installed = isV4l2LoopbackInstalled();
     if (installed)
     {
-        enabled = isV4l2Enabled();
-        if (!enabled)
-        {
-            enableV4l2();
-        }
-        enabled = isV4l2Enabled();
-        if (!enabled) {
-            QMessageBox::critical(nullptr, "Erreur", "Impossible d'activer la caméra virtuelle.");
-        }
-        else {
-            cameraDetected = detectDummyVideoDevice();
-            configureVirtualCamera();
-        }
+        enabled = false;
+        configureVirtualCamera();
     }
     else
     {
@@ -45,27 +34,6 @@ bool VirtualCamera::isV4l2Enabled()
     QString output = process.readAllStandardOutput();
     bool isEnabled = !output.isEmpty();
     return isEnabled;
-}
-
-void VirtualCamera::enableV4l2()
-{
-    QMessageBox::information(nullptr, "Demande d'authentification", "Le mot de passe d'administration sera demandé pour activer la caméra virtuelle.");
-
-    QProcess process;
-    process.setEnvironment(QProcess::systemEnvironment());
-    process.start("pkexec", QStringList() << "--user" << "root" << "modprobe" << "v4l2loopback");
-    process.waitForFinished();
-    if (process.exitCode() == 0)
-    {
-        // La commande pkexec s'est terminée avec succès
-        // Faites le traitement supplémentaire si nécessaire
-    }
-    else
-    {
-        // La commande pkexec a échoué, affichez l'erreur
-        qDebug() << "Erreur lors de l'exécution de pkexec : ";
-    }
-    process.close();
 }
 
 bool VirtualCamera::detectDummyVideoDevice()
@@ -110,14 +78,18 @@ void VirtualCamera::configureVirtualCamera()
     }
 
     QStringList arguments;
-    arguments << "v4l2loopback-ctl" << "set-fps" << "30" << devicePath.c_str() << "set-caps" << "NV12:640x480" << devicePath.c_str();
-    //arguments << "v4l2loopback-ctl" << "set-fps" << "30" << devicePath.c_str() << "set-image" << "MatrixLogo.png" << devicePath.c_str() << "set-caps" << "\"video/x-raw, format=nv12, width=1280, height=720\"" << devicePath.c_str();
-    //arguments << "v4l2-ctl" << "-d" << devicePath.c_str() << "--set-fmt-video=width=1280,height=720,pixelformat=nv12";
-    QProcess process;
-    process.setProgram("pkexec");
-    process.setArguments(arguments);
-    process.start();
-    process.waitForFinished();
+    QString command;
+    command = "/usr/bin/pkexec";
+    if (isV4l2Enabled()) {
+        arguments << "sh" << "-c" << "pkexec sh -c 'rmmod v4l2loopback && modprobe v4l2loopback && v4l2loopback-ctl set-caps \"video/x-raw, format=I420, width=1280, height=720\" " + QString(devicePath.c_str()) + "'";
+    } else {
+        arguments << "sh" << "-c" << "pkexec sh -c 'modprobe v4l2loopback && v4l2loopback-ctl set-caps \"video/x-raw, format=I420, width=1280, height=720\" " + QString(devicePath.c_str()) + "'";
+    }
+    processPipeline.startDetached(command, arguments);
+    QTimer::singleShot(15000, [=]() {
+        enabled = true;
+        cameraDetected = detectDummyVideoDevice();
+    });
 }
 
 
@@ -139,10 +111,9 @@ void VirtualCamera::updateVirtualFrame(const QImage& image) {
             return;
         }
 
-        QImage resizedImage = image.scaled(640, 480, Qt::IgnoreAspectRatio);
-        cv::Mat cvImage = QImageToCvMat(resizedImage);
+        cv::Mat cvImage = QImageToCvMat(image);
         cv::Mat cvImageYUV;
-        cv::cvtColor(cvImage, cvImageYUV, cv::COLOR_BGRA2YUV_I420);
+        cv::cvtColor(cvImage, cvImageYUV, cv::COLOR_RGB2YUV_I420);
 
         struct v4l2_format vid_format;
         vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
@@ -170,78 +141,11 @@ void VirtualCamera::updateVirtualFrame(const QImage& image) {
     }
 }
 
-
-/*void VirtualCamera::updateVirtualFrame(const QImage& image) {
-    if (installed && enabled && cameraDetected) {
-        const std::string devicePath = "/dev/video4";
-        int fd = open(devicePath.c_str(), O_WRONLY);
-        if (fd == -1) {
-            std::cerr << "Impossible d'ouvrir le périphérique de la caméra virtuelle" << std::endl;
-            return;
-        }
-
-        QImage resizedImage = image.scaled(1920, 1080, Qt::IgnoreAspectRatio);
-        cv::Mat cvImage = QImageToCvMat(resizedImage);
-        cv::Mat cvImageRgb24;
-        cv::cvtColor(cvImage, cvImageRgb24, cv::COLOR_RGBA2RGB);
-
-        QTemporaryFile tempFile;
-        tempFile.setFileTemplate("XXXXXX.png");
-        if (tempFile.open()) {
-            cv::imwrite(tempFile.fileName().toStdString(), cvImageRgb24);
-
-            QStringList arguments;
-            arguments << "-loop" << "1" << "-re" << "-i" << tempFile.fileName() << "-f" << "v4l2" << "-vcodec" << "rawvideo" << "-pixfmt" << "nv12" << "-vf" << "transpose=4" << devicePath.c_str();
-            QProcess process;
-            process.setProgram("ffmpeg");
-            process.setArguments(arguments);
-
-            connect(&process, &QProcess::readyReadStandardOutput, [&process]() {
-                QByteArray output = process.readAllStandardOutput();
-                // Faire quelque chose avec la sortie standard de ffmpeg
-            });
-
-            connect(&process, &QProcess::readyReadStandardError, [&process]() {
-                QByteArray error = process.readAllStandardError();
-                // Faire quelque chose avec les erreurs de ffmpeg
-            });
-
-            process.start();
-            process.waitForFinished();
-
-            close(fd);
-        } else {
-            std::cerr << "Erreur lors de la création du fichier temporaire" << std::endl;
-        }
+void VirtualCamera::stop()
+{
+    if (processPipeline.state() != QProcess::NotRunning)
+    {
+        processPipeline.kill();
+        processPipeline.waitForFinished();
     }
 }
-
-        //cv::imwrite("image_rgb24.jpg", cvImageRgb24);
-
-        /*struct v4l2_format format{};
-        format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
-        if (ioctl(fd, VIDIOC_G_FMT, &format) < 0) {
-            perror("Impossible d'obtenir le format de la caméra virtuelle");
-            close(fd);
-            return;
-        }
-
-        format.fmt.pix.width = 1280;
-        format.fmt.pix.height = 720;
-        format.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
-        format.fmt.pix.sizeimage = cvImageRgb24.total() * cvImageRgb24.elemSize();
-        format.fmt.pix.field = V4L2_FIELD_NONE;
-
-        if (ioctl(fd, VIDIOC_S_FMT, &format) < 0) {
-            perror("Impossible de définir le format de la caméra virtuelle");
-            close(fd);
-            return;
-        }
-
-        size_t written = write(fd, cvImageRgb24.data, format.fmt.pix.sizeimage);
-        if (written == -1) {
-            std::cerr << "Erreur lors de l'écriture des données dans la caméra virtuelle" << std::endl;
-        }
-        close(fd);
-    }
-}*/

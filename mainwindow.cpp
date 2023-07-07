@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() {
     cameraCapture->capture.release();
+    virtualCamera->stop();
 }
 
 void MainWindow::updateImage(const QImage &image)

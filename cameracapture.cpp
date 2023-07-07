@@ -6,8 +6,6 @@ CameraCapture::CameraCapture(QObject *parent)
     connect(&timer, &QTimer::timeout, this, &CameraCapture::processFrame);
     timer.setInterval(30);
 
-    running = true;
-
     openCamera();
 }
 
