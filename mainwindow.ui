@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>matrix-linux.png</normaloff>matrix-linux.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget"/>
  </widget>
  <resources/>

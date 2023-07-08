@@ -14,7 +14,9 @@ set(SOURCES
         main.cpp
         mainwindow.cpp mainwindow.h
         cameracapture.cpp cameracapture.h
-        videoprocesssing.cpp videoprocesssing.h raindrop.cpp raindrop.h virtualcamera.cpp virtualcamera.h)
+        videoprocesssing.cpp videoprocesssing.h
+        raindrop.cpp raindrop.h
+        virtualcamera.cpp virtualcamera.h)
 
 set(RC_SRC
         resources.qrc)

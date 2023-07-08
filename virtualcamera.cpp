@@ -7,16 +7,36 @@ VirtualCamera::VirtualCamera(QObject *parent) : QObject(parent)
 void VirtualCamera::setup()
 {
     installed = isV4l2LoopbackInstalled();
+    enabled = false;
     if (installed)
     {
-        enabled = false;
-        configureVirtualCamera();
+        if (!isV4l2Enabled()) {
+            QMessageBox::StandardButton reply;
+            reply = QMessageBox::question(nullptr, "Activation de la caméra", "Souhaitez-vous activer la caméra virtuelle ?", QMessageBox::Yes|QMessageBox::No);
+
+            if (reply == QMessageBox::Yes) {
+                enableV4l2();
+                if (!isV4l2Enabled()) {
+                    QMessageBox::critical(nullptr, "Erreur",
+                                          "Une erreur s'est produite lors de l'activation de la caméra virtuelle.");
+                    return;
+                }
+            } else {
+                QMessageBox::critical(nullptr, "Erreur",
+                                      "Une erreur s'est produite lors de l'activation de la caméra virtuelle.");
+                return;
+            }
+        }
+        if (detectDummyVideoDevice()) {
+            configureVirtualCamera();
+        }
     }
     else
     {
-        QMessageBox::critical(nullptr, "Erreur", "Le module du noyau Linux v4l2loopback-dkms et l'outils v4l2loopback-utils doivent être installés pour utiliser la caméra virtuelle.");
+        QMessageBox::critical(nullptr, "Erreur", "Le module du noyau Linux v4l2loopback-dkms et l'outil v4l2loopback-utils doivent être installés pour utiliser la caméra virtuelle.");
     }
 }
+
 bool VirtualCamera::isV4l2LoopbackInstalled()
 {
     QProcess process;
@@ -34,6 +54,15 @@ bool VirtualCamera::isV4l2Enabled()
     QString output = process.readAllStandardOutput();
     bool isEnabled = !output.isEmpty();
     return isEnabled;
+}
+
+
+void VirtualCamera::enableV4l2()
+{
+    QStringList arguments;
+    arguments  << "modprobe" << "v4l2loopback";
+    processActivateVirtCam.start("pkexec", arguments);
+    processActivateVirtCam.waitForFinished();
 }
 
 bool VirtualCamera::detectDummyVideoDevice()
@@ -60,38 +89,137 @@ bool VirtualCamera::detectDummyVideoDevice()
             }
 
             close(fd);
-        }       return false;  // Caméra virtuelle non détectée
+        }       return false;
     } catch (const std::exception& e) {
         std::cerr << "Une exception s'est produite : " << std::endl;
         return false;
     }
+}
 
+void VirtualCamera::createScript(const std::string& scriptPath) {
+    std::ofstream scriptFile(scriptPath);
+    if (scriptFile.is_open()) {
+        scriptFile << "#!/bin/sh\n";
+        scriptFile << "pkill -9 gst-launch-1.0\n";
+        scriptFile << "rmmod v4l2loopback\n";
+        scriptFile << "modprobe v4l2loopback\n";
+        scriptFile << "v4l2loopback-ctl set-caps \"video/x-raw, format=I420, width=1280, height=720\" " + devicePath + "\n";
+        scriptFile.close();
+
+        // Donner les droits d'exécution au script
+        std::string chmodCommand = "chmod +x " + scriptPath;
+        std::system(chmodCommand.c_str());
+    }
 }
 
 void VirtualCamera::configureVirtualCamera()
 {
+    if (!devicePath.empty()) {
+        killProcessByPath();
+    }
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(nullptr, "Confirmation", "Voulez-vous configurer la caméra virtuelle ?", QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::No)
     {
         return;
     }
-
+    std::filesystem::path tempDir = std::filesystem::temp_directory_path();
+    tempFile = tempDir / "tempScript.sh";
+    std::string scriptPath = tempFile;
+    createScript(scriptPath);
     QStringList arguments;
-    QString command;
-    command = "/usr/bin/pkexec";
-    if (isV4l2Enabled()) {
-        arguments << "sh" << "-c" << "pkexec sh -c 'rmmod v4l2loopback && modprobe v4l2loopback && v4l2loopback-ctl set-caps \"video/x-raw, format=I420, width=1280, height=720\" " + QString(devicePath.c_str()) + "'";
+    arguments << QString::fromUtf8(scriptPath);
+    processPipeline.start("pkexec", arguments);
+
+    if (processPipeline.waitForStarted()) {
+        std::cout << "Processus démarré avec succès." << std::endl;
+
+        if (processPipeline.waitForReadyRead()) {
+            std::cout << "Processus démarré avec succès." << std::endl;
+            QThread::msleep(2000);
+            QByteArray output = processPipeline.readAllStandardOutput();
+            QString outputString = QString::fromUtf8(output);
+            std::cout << "Fin de fichier : " << outputString.toStdString() << std::endl;
+
+            if (outputString.endsWith("Définition du pipeline à NULL...\n") || outputString.endsWith("Définition du pipeline à PAUSED...\n")) {
+                handleProcessOutput();
+            } else {
+                processPipeline.kill();
+                std::cout << "Erreur lors du démarrage du processus." << std::endl;
+            }
+        }
     } else {
-        arguments << "sh" << "-c" << "pkexec sh -c 'modprobe v4l2loopback && v4l2loopback-ctl set-caps \"video/x-raw, format=I420, width=1280, height=720\" " + QString(devicePath.c_str()) + "'";
+        std::cout << "Erreur lors du démarrage du processus." << std::endl;
     }
-    processPipeline.startDetached(command, arguments);
-    QTimer::singleShot(15000, [=]() {
-        enabled = true;
-        cameraDetected = detectDummyVideoDevice();
-    });
 }
 
+void VirtualCamera::handleProcessOutput() {
+    QProcess process;
+    process.start("v4l2-ctl", QStringList() << "--all" << "-d" << "/dev/video4");
+    process.waitForFinished();
+    QString processOutput = process.readAllStandardOutput();
+
+    QStringList lines = processOutput.split('\n');
+    QString widthHeight;
+    for (int i = 0; i < lines.size(); ++i) {
+        QString line = lines.at(i);
+        if (line.contains("Format Video Output:")) {
+            // Recherche de la ligne suivante
+            if (i + 1 < lines.size()) {
+                QString nextLine = lines.at(i + 1);
+                if (nextLine.contains("Width/Height")) {
+                    widthHeight = nextLine.mid(21);
+                    break;
+                }
+            }
+        }
+    }
+    QString width;
+    QString height;
+    if (!widthHeight.isEmpty()) {
+        QStringList dimensions = widthHeight.split('/');
+        if (dimensions.size() == 2) {
+            width = dimensions[0].trimmed();
+            height = dimensions[1].trimmed();
+            qDebug() << "Largeur : " << width;
+            qDebug() << "Hauteur : " << height;
+        }
+    }
+
+    if (width == "1280" && height == "720") {
+        enabled = true;
+        QMessageBox::information(nullptr, "Configuration terminée",
+                                 "La caméra virtuelle est configurée avec succès.");
+        return;
+    }
+    enabled = false;
+    QMessageBox::critical(nullptr, "Échec de la configuration",
+                          "La configuration de la caméra virtuelle est incorrecte. Vérifiez les dimensions de la caméra.");
+}
+
+void VirtualCamera::killProcessByPath() {
+    FILE* p = popen("pgrep -f v4l2loopback", "r");
+    if (p == nullptr) {
+        std::cerr << "Erreur lors de l'exécution de pgrep" << std::endl;
+        return;
+    }
+    char pidBuffer[16];
+    while (fgets(pidBuffer, sizeof(pidBuffer), p)) {
+        size_t len = std::strlen(pidBuffer);
+        if (len > 0 && pidBuffer[len - 1] == '\n') {
+            pidBuffer[len - 1] = '\0';
+        }
+        pid_t pid = atoi(pidBuffer);
+        if (pid > 0) {
+            if (kill(pid, SIGTERM) == 0) {
+                std::cout << "Processus avec PID " << pid << " terminé" << std::endl;
+            } else {
+                std::cerr << "Erreur lors de la terminaison du processus avec PID " << pid << std::endl;
+            }
+        }
+    }
+    pclose(p);
+}
 
 cv::Mat VirtualCamera::QImageToCvMat(const QImage &image)
 {
@@ -103,8 +231,7 @@ cv::Mat VirtualCamera::QImageToCvMat(const QImage &image)
 
 
 void VirtualCamera::updateVirtualFrame(const QImage& image) {
-    if (installed && enabled && cameraDetected) {
-        const std::string devicePath = "/dev/video4";
+    if (installed && enabled) {
         int fd = open(devicePath.c_str(), O_WRONLY);
         if (fd == -1) {
             std::cerr << "Impossible d'ouvrir le périphérique de la caméra virtuelle" << std::endl;
@@ -141,11 +268,10 @@ void VirtualCamera::updateVirtualFrame(const QImage& image) {
     }
 }
 
-void VirtualCamera::stop()
-{
-    if (processPipeline.state() != QProcess::NotRunning)
-    {
-        processPipeline.kill();
-        processPipeline.waitForFinished();
-    }
+void VirtualCamera::stop() {
+    QString killCommand = "pkill -9 gst-launch-1.0";
+    QProcess killProcess;
+    killProcess.start(killCommand);
+    killProcess.kill();
+    killProcess.waitForFinished();
 }

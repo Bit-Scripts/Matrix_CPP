@@ -21,6 +21,14 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QStandardPaths>
+#include <QThread>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <string_view>
+#include <cstdlib>
+#include <signal.h>
+#include <cstring>
 #include <opencv2/opencv.hpp>
 #include "mainwindow.h"
 #include "videoprocesssing.h"
@@ -32,6 +40,7 @@ Q_OBJECT
 public:
     VirtualCamera(QObject *parent = nullptr);
     QProcess process;
+    QProcess processPipeline;
 
 public slots:
     void setup();
@@ -39,6 +48,7 @@ public slots:
     bool isV4l2Enabled();
     void updateVirtualFrame(const QImage& image);
     void configureVirtualCamera();
+    void enableV4l2();
     void stop();
 
 private:
@@ -47,8 +57,15 @@ private:
     bool installed;
     bool enabled;
     bool cameraDetected;
+    QString pidFileName;
     cv::Mat QImageToCvMat(const QImage &image);
-    QProcess processPipeline;
+    QProcess processActivateVirtCam;
+    QProcess checkProcess;
+    QString outputFileName;
+    std::filesystem::path tempFile;
+    void killProcessByPath();
+    void createScript(const std::string& scriptPath);
+    void handleProcessOutput();
 };
 
 #endif // VIRTUALCAMERA_H
