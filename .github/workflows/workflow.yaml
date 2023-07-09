@@ -22,10 +22,7 @@ jobs:
           qt-version: '6.2.0'
 
       - name: Install additional Qt dependencies
-        run: |
-         sudo add-apt-repository ppa:beineri/opt-qt-6.2.0-$(lsb_release -cs)
-         sudo apt update && sudo apt upgrade
-         sudo apt-get install -y libqt6* qt6-*dev libxcb-xinerama0
+        run: sudo apt-get install -y qt6-base qt6-base-dev-tools qt6* libqt6* qt6-*dev libxcb-xinerama0
 
       - name: Install OpenCV
         run: sudo apt-get install -y libopencv-apps2d libopencv-apps-dev libopencv-dev python3-opencv libgstreamer-opencv1.0-0 gstreamer1.0-opencv opencv-data
