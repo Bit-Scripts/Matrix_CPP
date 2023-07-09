@@ -141,7 +141,7 @@ void VirtualCamera::configureVirtualCamera()
             QString outputString = QString::fromUtf8(output);
             std::cout << "Fin de fichier : " << outputString.toStdString() << std::endl;
 
-            if (outputString.endsWith("Définition du pipeline à NULL...\n") || outputString.endsWith("Définition du pipeline à PAUSED...\n")) {
+            if (outputString.endsWith("NULL...\n") || outputString.endsWith("PAUSED...\n")) {
                 handleProcessOutput();
             } else {
                 processPipeline.kill();
@@ -271,7 +271,5 @@ void VirtualCamera::updateVirtualFrame(const QImage& image) {
 void VirtualCamera::stop() {
     QString killCommand = "pkill -9 gst-launch-1.0";
     QProcess killProcess;
-    killProcess.start(killCommand);
-    killProcess.kill();
-    killProcess.waitForFinished();
+    killProcess.startDetached(killCommand);
 }
