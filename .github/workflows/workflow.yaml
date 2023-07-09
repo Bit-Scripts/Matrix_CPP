@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Qt and OpenCV
-        uses: KDE/setup-kde@v1
+        uses: qmcgaw/setup-qt@v3
         with:
           qt-version: '6.2.0'
           opencv-version: '4.5.3'
