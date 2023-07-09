@@ -1,0 +1,48 @@
+name: Build AppImage
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Qt and OpenCV
+        uses: KDE/setup-kde@v1
+        with:
+          qt-version: '6.2.0'
+          opencv-version: '4.5.3'
+
+      - name: Install FFmpeg
+        run: sudo apt-get install -y ffmpeg
+
+      - name: Install v4l2loopback
+        run: sudo apt-get install -y v4l2loopback-dkms v4l2loopback-utils
+
+      - name: Install additional Qt dependencies
+        run: sudo apt-get install -y libqt6core6 libqt6widgets6 libqt6multimedia6 libqt6multimediawidgets6 qt6-base-dev qt6-declarative-dev
+      - name: Build project
+        run: |
+          rm -rf build
+          mkdir build && cd build
+          cmake .. -DCMAKE_INSTALL_PREFIX=AppDir/usr
+          make -j $( nproc )
+          make INSTALL_ROOT=AppDir/ -j$(nproc) install ; find AppDir/
+
+      - name: Create AppImage
+        run: |
+          cd build
+          wget -c -nv "https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20220822-1/linuxdeploy-x86_64.AppImage"
+          chmod a+x linuxdeploy-x86_64.AppImage
+          ARCH=x86_64 ./linuxdeploy-x86_64.AppImage --appdir AppDir/ --output appimage --icon-filename AppDir/usr/bin/matrix-linux.png --desktop-file AppDir/usr/share/applications/Matrix.desktop --icon-file  AppDir/usr/bin/matrix-linux.png
+
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v2
+        with:
+          name: appimage
+          path: build/Matrix*-x86_64.AppImage

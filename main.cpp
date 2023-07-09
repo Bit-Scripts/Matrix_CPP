@@ -5,7 +5,8 @@
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
-    QIcon icon(QDir::currentPath() + ":/matrix-linux.png");
+    QString appDir = QCoreApplication::applicationDirPath();
+    QIcon icon(appDir + "/matrix-linux.png");
 
     MainWindow mainWindow;
     mainWindow.resize(1280,720);

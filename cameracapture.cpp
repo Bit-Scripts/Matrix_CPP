@@ -64,7 +64,8 @@ void CameraCapture::processFrame()
                     frame.step,
                     QImage::Format_RGB888);
 
-        QImage logo = QImage("MatrixLogo.png");
+        QString appDir = QCoreApplication::applicationDirPath();
+        QImage logo = QImage(appDir + "/MatrixLogo.png");
 
         QImage resizedLogo = logo.scaled(image.width(), image.height(), Qt::KeepAspectRatio);
 

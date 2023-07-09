@@ -21,7 +21,7 @@ set(SOURCES
 set(RC_SRC
         resources.qrc)
 
-qt_add_resources(${PROJECT_NAME}  ${RC_SRC})
+qt_add_resources(${PROJECT_NAME} ${RC_SRC})
 
 qt_add_executable(${PROJECT_NAME} ${SOURCES})
 
@@ -48,3 +48,22 @@ file(COPY ${CMAKE_SOURCE_DIR}/matrix-linux.png
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_SOURCE_DIR}/MatrixLogo.png
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+INSTALL(TARGETS ${PROJECT_NAME}
+        LIBRARY
+        DESTINATION lib)
+
+INSTALL(FILES ${CMAKE_SOURCE_DIR}/matrix-linux.png
+        DESTINATION bin)
+
+INSTALL(FILES ${CMAKE_SOURCE_DIR}/MatrixLogo.png
+        DESTINATION bin)
+
+INSTALL(FILES ${CMAKE_SOURCE_DIR}/fonts/mtx.ttf
+        DESTINATION bin/fonts)
+
+INSTALL(FILES ${CMAKE_SOURCE_DIR}/Matrix.desktop
+        DESTINATION share/applications)
+
+INSTALL(TARGETS ${PROJECT_NAME}
+        DESTINATION bin)

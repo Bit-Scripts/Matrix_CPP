@@ -5,7 +5,10 @@
 
 VideoProcessing::VideoProcessing(QObject *parent) : QObject(parent)
 {
-    int fontId = QFontDatabase::addApplicationFont(QDir::currentPath() + "/fonts/mtx.ttf");
+
+    QString appDir = QCoreApplication::applicationDirPath();
+    int fontId = QFontDatabase::addApplicationFont(appDir + "/fonts/mtx.ttf");
+
     if (fontId == -1) {
         std::cerr << "Erreur dans VideoProcessing : Police mtx non chargée" << std::endl;
         return;
