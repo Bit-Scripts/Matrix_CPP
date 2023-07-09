@@ -12,6 +12,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Update GPG keys for Xenial Security repository
+        run: |
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5 3B4FE6ACC0B21F32
+
       - name: Set up Qt
         uses: jurplel/install-qt-action@v3
         with:
