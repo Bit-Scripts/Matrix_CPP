@@ -59,4 +59,5 @@ jobs:
         with:
           asset_path: build/Matrix*-x86_64.AppImage
           asset_name: Matrix-x86_64.AppImage
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
 
