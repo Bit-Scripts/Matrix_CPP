@@ -7,7 +7,6 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 COMPONENTS Core Widgets Multimedia REQUIRED)
 find_package(OpenCV 4 REQUIRED)
-find_package(FFmpeg REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 set(SOURCES
