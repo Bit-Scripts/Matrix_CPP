@@ -16,10 +16,8 @@ jobs:
         run: |
           sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5 3B4FE6ACC0B21F32
 
-      - name: Set up Qt
-        uses: jurplel/install-qt-action@v3
-        with:
-          qt-version: '6.2.0'
+      - name: Install additional Qt dependencies
+        run: sudo apt-get install -y libqt6* qt6-*dev
 
       - name: Install OpenCV
         run: sudo apt-get install -y libopencv-apps2d libopencv-apps-dev libopencv-dev python3-opencv libgstreamer-opencv1.0-0 gstreamer1.0-opencv opencv-data
@@ -29,9 +27,6 @@ jobs:
 
       - name: Install v4l2loopback
         run: sudo apt-get install -y v4l2loopback-dkms v4l2loopback-utils
-
-      - name: Install additional Qt dependencies
-        run: sudo apt-get install -y libqt6* qt6-*dev
 
       - name: Build project
         run: |
