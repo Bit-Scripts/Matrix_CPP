@@ -21,11 +21,11 @@ jobs:
         with:
           qt-version: '6.2.0'
 
-      - name: OpenCV
+      - name: Install OpenCV
         run: sudo apt-get install -y libopencv-apps2d libopencv-apps-dev libopencv-dev python3-opencv libgstreamer-opencv1.0-0 gstreamer1.0-opencv opencv-data
 
       - name: Install FFmpeg
-        run: sudo apt-get install -y ffmpeg libavcodec* libavdevice* libavfilter* libavformat* libswscale* libffmpeg-ocaml libsdl-kitchensink1 libsdl-kitchensink-dev libffmpeg-ocaml-dev libswscale-dev libav*-dev libswresample-dev libswresample* libpostproc-dev gstreamer1.0-libav libpostproc* ffmpegthumbs
+        run: sudo apt-get install -y ffmpeg libavcodec58 libavdevice* libavfilter7 libavformat58 libswscale* libffmpeg-ocaml libsdl-kitchensink1 libsdl-kitchensink-dev libffmpeg-ocaml-dev libswscale-dev libav*-dev libswresample-dev libswresample* libpostproc-dev gstreamer1.0-libav libpostproc* ffmpegthumbs
 
       - name: Install v4l2loopback
         run: sudo apt-get install -y v4l2loopback-dkms v4l2loopback-utils
