@@ -12,10 +12,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Qt and OpenCV
-        uses: qmcgaw/setup-qt@v3
+      - name: Set up Qt
+        uses: jurplel/install-qt-action@v3
         with:
           qt-version: '6.2.0'
+
+      - name: OpenCV
+        uses: Dovyski/setup-opencv-action@v1.1
+        with:
           opencv-version: '4.5.3'
 
       - name: Install FFmpeg
