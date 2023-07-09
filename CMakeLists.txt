@@ -25,6 +25,21 @@ qt_add_resources(${PROJECT_NAME} ${RC_SRC})
 
 qt_add_executable(${PROJECT_NAME} ${SOURCES})
 
+find_package(FFmpeg COMPONENTS AVCODEC AVFORMAT AVUTIL AVDEVICE REQUIRED) #add here the list of ffmpeg components required
+
+if(FFMPEG_FOUND)
+    #  FFMPEG_INCLUDE_DIRS  - Include directory necessary for using the required components headers.
+    #  FFMPEG_LIBRARIES     - Link these to use the required ffmpeg components.
+    #  FFMPEG_DEFINITIONS   - Compiler switches required for using the required ffmpeg components.
+    message("FFMPEG_INCLUDE_DIRS = ${FFMPEG_INCLUDE_DIRS} ")
+    message("FFMPEG_LIBRARIES = ${FFMPEG_LIBRARIES} ")
+    message("FFMPEG_DEFINITIONS = ${FFMPEG_DEFINITIONS} ")
+
+    target_include_directories(${PROJECT_NAME} PRIVATE ${FFMPEG_INCLUDE_DIRS})
+
+endif()
+
+
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
         Qt6::Core
@@ -33,8 +48,6 @@ target_link_libraries(${PROJECT_NAME}
         ${OpenCV_LIBS}
         ${FFMPEG_LIBRARIES}
         )
-
-target_include_directories(${PROJECT_NAME} PRIVATE ${FFMPEG_INCLUDE_DIRS})
 
 add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
