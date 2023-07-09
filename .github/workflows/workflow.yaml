@@ -32,7 +32,8 @@ jobs:
         run: sudo apt-get install -y v4l2loopback-dkms v4l2loopback-utils
 
       - name: Install additional Qt dependencies
-        run: sudo apt-get install -y libqt6core6 libqt6widgets6 libqt6multimedia6 libqt6multimediawidgets6 qt6-base-dev qt6-declarative-dev
+        run: sudo apt-get install -y libqt6* qt6-*dev
+
       - name: Build project
         run: |
           rm -rf build
