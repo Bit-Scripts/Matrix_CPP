@@ -25,7 +25,7 @@ jobs:
         run: sudo apt-get install -y libopencv-apps2d libopencv-apps-dev libopencv-dev python3-opencv libgstreamer-opencv1.0-0 gstreamer1.0-opencv opencv-data
 
       - name: Install FFmpeg
-        run: sudo apt-get install -y ffmpeg libavcodec59 libavcodec59 libavdevice59 libavfilter8 libavformat59 libavutil57 libswscale6 libffmpeg-ocaml libsdl-kitchensink1 libsdl-kitchensink-dev libffmpeg-ocaml-dev libavbdevice-dev libavcodec-dev libavformat-dev libswscale-dev libavfilder-dev libswresample-dev libswresample4 libavutil-dev  libpostproc-dev gstreamer1.0-libav libpostproc56 ffmpegthumbs chromium-ffmpeg
+        run: sudo apt-get install -y ffmpeg libavcodec* libavdevice* libavfilter* libavformat* libavutil* libswscale* libffmpeg-ocaml libsdl-kitchensink1 libsdl-kitchensink-dev libffmpeg-ocaml-dev libavbdevice-dev libavcodec-dev libavformat-dev libswscale-dev libavfilder-dev libswresample-dev libswresample4 libavutil-dev  libpostproc-dev gstreamer1.0-libav libpostproc* ffmpegthumbs
 
       - name: Install v4l2loopback
         run: sudo apt-get install -y v4l2loopback-dkms v4l2loopback-utils
