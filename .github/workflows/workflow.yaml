@@ -16,6 +16,11 @@ jobs:
         run: |
           sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5 3B4FE6ACC0B21F32
 
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          qt-version: '6.2.0'
+
       - name: Install additional Qt dependencies
         run: sudo apt-get install -y libqt6* qt6-*dev
 
