@@ -30,6 +30,7 @@ target_link_libraries(${PROJECT_NAME}
         Qt6::Widgets
         Qt6::Multimedia
         ${OpenCV_LIBS}
+        xcb
         )
 
 find_path( AVCODEC_INCLUDE_DIR libavcodec/avcodec.h )
@@ -45,8 +46,9 @@ add_custom_command(
         COMMENT "Copying font directory"
 )
 
-file(COPY ${CMAKE_SOURCE_DIR}/matrix-linux.png
+file(COPY ${CMAKE_SOURCE_DIR}/com.bitscripts.matrix.png
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 file(COPY ${CMAKE_SOURCE_DIR}/MatrixLogo.png
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 

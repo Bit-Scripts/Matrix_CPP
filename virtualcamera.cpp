@@ -2,7 +2,11 @@
 #include "virtualcamera.h"
 
 VirtualCamera::VirtualCamera(QObject *parent) : QObject(parent)
-{ }
+{
+    QString appDir = QCoreApplication::applicationDirPath();
+    QIcon icon(appDir + "/com.bitscripts.matrix.png");
+    iconMatrix = icon;
+}
 
 void VirtualCamera::setup()
 {
@@ -11,19 +15,26 @@ void VirtualCamera::setup()
     if (installed)
     {
         if (!isV4l2Enabled()) {
-            QMessageBox::StandardButton reply;
-            reply = QMessageBox::question(nullptr, "Activation de la caméra", "Souhaitez-vous activer la caméra virtuelle ?", QMessageBox::Yes|QMessageBox::No);
+            QMessageBox msgBoxAvailable;
+            msgBoxAvailable.setWindowIcon(iconMatrix); // Assuming iconMatrix is a valid QIcon
+            msgBoxAvailable.setWindowTitle("Activation de la caméra");
+            msgBoxAvailable.setText("Souhaitez-vous activer la caméra virtuelle ?");
+            msgBoxAvailable.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+            msgBoxAvailable.setDefaultButton(QMessageBox::No);
+            int ret = msgBoxAvailable.exec();
 
-            if (reply == QMessageBox::Yes) {
+            if (ret == QMessageBox::Yes) {
                 enableV4l2();
                 if (!isV4l2Enabled()) {
-                    QMessageBox::critical(nullptr, "Erreur",
-                                          "Une erreur s'est produite lors de l'activation de la caméra virtuelle.");
+                    QMessageBox msgBoxAvailableError(QMessageBox::Critical, "Erreur", "Une erreur s'est produite lors de l'activation de la caméra virtuelle.");
+                    msgBoxAvailableError.setWindowIcon(iconMatrix);;
+                    msgBoxAvailableError.exec();
                     return;
                 }
             } else {
-                QMessageBox::critical(nullptr, "Erreur",
-                                      "Une erreur s'est produite lors de l'activation de la caméra virtuelle.");
+                QMessageBox msgBoxAvailableError(QMessageBox::Critical, "Erreur", "Une erreur s'est produite lors de l'activation de la caméra virtuelle.");
+                msgBoxAvailableError.setWindowIcon(iconMatrix);;
+                msgBoxAvailableError.exec();
                 return;
             }
         }
@@ -33,7 +44,9 @@ void VirtualCamera::setup()
     }
     else
     {
-        QMessageBox::critical(nullptr, "Erreur", "Le module du noyau Linux v4l2loopback-dkms et l'outil v4l2loopback-utils doivent être installés pour utiliser la caméra virtuelle.");
+        QMessageBox msgBoxInstalled(QMessageBox::Critical, "Erreur", "Le module du noyau Linux v4l2loopback-dkms et l'outil v4l2loopback-utils doivent être installés pour utiliser la caméra virtuelle.");
+        msgBoxInstalled.setWindowIcon(iconMatrix);;
+        msgBoxInstalled.exec();
     }
 }
 
@@ -117,9 +130,14 @@ void VirtualCamera::configureVirtualCamera()
     if (!devicePath.empty()) {
         killProcessByPath();
     }
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(nullptr, "Confirmation", "Voulez-vous configurer la caméra virtuelle ?", QMessageBox::Yes|QMessageBox::No);
-    if (reply == QMessageBox::No)
+    QMessageBox msgBoxConfigure;
+    msgBoxConfigure.setWindowIcon(iconMatrix); // Assuming iconMatrix is a valid QIcon
+    msgBoxConfigure.setWindowTitle("Configuration de la caméra");
+    msgBoxConfigure.setText("Souhaitez-vous configurer la caméra virtuelle ?");
+    msgBoxConfigure.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBoxConfigure.setDefaultButton(QMessageBox::No);
+    int buttonClicked = msgBoxConfigure.exec();
+    if (buttonClicked == QMessageBox::No)
     {
         return;
     }

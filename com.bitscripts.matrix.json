@@ -1,0 +1,78 @@
+{
+  "app-id": "com.bitscripts.matrix",
+  "runtime": "org.freedesktop.Platform",
+  "runtime-version": "22.08",
+  "arch": "x86_64",
+  "sdk": "org.freedesktop.Sdk",
+  "command": "Matrix",
+  "modules": [
+    {
+      "name": "Matrix",
+      "buildsystem": "simple",
+      "sources": [
+        {
+          "type": "file",
+          "path": "/mnt/Git_Code_Linux/Matrix CPP",
+          "dest": "/mnt/Git_Code_Linux/Matrix CPP/build/flatpak"
+        }
+      ],
+      "build-commands": [
+        "cmake .. -DCMAKE_INSTALL_PREFIX=/app",
+        "make",
+        "make install"
+      ],
+      "dependencies": [
+        "qt6-base-dev-tools",
+        "qt6-default",
+        "libqt6core6",
+        "libqt6widgets6",
+        "libqt6gui6",
+        "libqt6network6",
+        "libqt6webview6",
+        "libqt6webenginewidgets6",
+        "libqt6waylandclient6",
+        "libqt6waylandcompositor6",
+        "libqt6waylandeglclienthwintegration6",
+        "libqt6waylandeglcompositorhwintegration6",
+        "libxcb-xinerama0",
+        "libopencv-apps2d",
+        "libopencv-apps-dev",
+        "libopencv-dev",
+        "libgstreamer-opencv1.0-0",
+        "gstreamer1.0-opencv",
+        "opencv-data",
+        "ffmpeg",
+        "libavcodec58",
+        "libavdevice58",
+        "libavfilter7",
+        "libavformat58",
+        "libswscale5",
+        "libffmpeg-ocaml",
+        "libsdl-kitchensink1",
+        "libsdl-kitchensink-dev",
+        "libffmpeg-ocaml-dev",
+        "libswscale-dev",
+        "libavresample4",
+        "libavutil56",
+        "libpostproc55",
+        "gstreamer1.0-libav",
+        "libpostproc55",
+        "ffmpegthumbs",
+        "v4l2loopback-dkms",
+        "v4l2loopback-utils"
+      ]
+    }
+  ],
+  "finish-args": [
+    "--share=network",
+    "--socket=x11",
+    "--socket=wayland",
+    "--socket=pulseaudio",
+    "--device=dri",
+    "--device=/dev/video*"
+  ],
+  "tags": ["graphics", "multimedia"],
+  "desktop-file-name": "com.bitscripts.matrix.desktop",
+  "rename-desktop-file": "com.bitscripts.matrix.desktop",
+  "rename-icon": "com.bitscripts.matrix"
+}

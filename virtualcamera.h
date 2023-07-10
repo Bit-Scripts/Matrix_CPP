@@ -66,6 +66,7 @@ private:
     void killProcessByPath();
     void createScript(const std::string& scriptPath);
     void handleProcessOutput();
+    QIcon iconMatrix;
 };
 
 #endif // VIRTUALCAMERA_H
