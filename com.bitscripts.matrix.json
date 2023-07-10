@@ -4,20 +4,24 @@
   "runtime-version": "22.08",
   "arch": "x86_64",
   "sdk": "org.freedesktop.Sdk",
-  "command": "Matrix",
+  "command": "matrix",
   "modules": [
     {
       "name": "Matrix",
-      "buildsystem": "simple",
+      "buildsystem": "cmake",
+      "config-opts": [
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
       "sources": [
         {
-          "type": "file",
-          "path": "/mnt/Git_Code_Linux/Matrix CPP",
-          "dest": "/mnt/Git_Code_Linux/Matrix CPP/build/flatpak"
+          "type": "git",
+          "url": "https://github.com/bitscripts/Matrix.git",
+          "branch": "main"
         }
       ],
       "build-commands": [
-        "cmake .. -DCMAKE_INSTALL_PREFIX=/app",
+        "cd /mnt/Git_Code_Linux/Matrix CPP/build/",
+        "cmake .. -DCMAKE_INSTALL_PREFIX=com.bitscripts.matrix/",
         "make",
         "make install"
       ],
