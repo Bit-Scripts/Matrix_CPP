@@ -1,6 +1,6 @@
 [Desktop Entry]
 Categories=AudioVideo;
-Exec=com.bitscripts.matrix
+Exec=/usr/bin/flatpak run --branch=master --arch=x86_64 --command=Matrix com.bitscripts.matrix
 Icon=com.bitscripts.matrix.png
 Name=Matrix
 Version=1.0
