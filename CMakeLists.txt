@@ -62,17 +62,22 @@ INSTALL(TARGETS ${PROJECT_NAME}
         LIBRARY
         DESTINATION lib)
 
-INSTALL(FILES ${CMAKE_SOURCE_DIR}/com.bitscripts.matrix.png
-        DESTINATION bin)
+execute_process(COMMAND bash "-c" "printenv | grep FLATPAK_ID"
+OUTPUT_VARIABLE IS_FLATPAK)
 
-INSTALL(FILES ${CMAKE_SOURCE_DIR}/MatrixLogo.png
-        DESTINATION bin)
+if(NOT IS_FLATPAK)
+        INSTALL(FILES ${CMAKE_SOURCE_DIR}/com.bitscripts.matrix.png
+                DESTINATION bin)
 
-INSTALL(FILES ${CMAKE_SOURCE_DIR}/fonts/mtx.ttf
-        DESTINATION bin/fonts)
+        INSTALL(FILES ${CMAKE_SOURCE_DIR}/MatrixLogo.png
+                DESTINATION bin)
 
-INSTALL(FILES ${CMAKE_SOURCE_DIR}/com.bitscripts.matrix.desktop
-        DESTINATION share/applications)
+        INSTALL(FILES ${CMAKE_SOURCE_DIR}/fonts/mtx.ttf
+                DESTINATION bin/fonts)
+
+        INSTALL(FILES ${CMAKE_SOURCE_DIR}/com.bitscripts.matrix.desktop
+                DESTINATION share/applications)
+endif()
 
 INSTALL(TARGETS ${PROJECT_NAME}
         DESTINATION bin)
