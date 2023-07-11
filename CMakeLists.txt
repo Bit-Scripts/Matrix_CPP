@@ -71,7 +71,7 @@ INSTALL(FILES ${CMAKE_SOURCE_DIR}/MatrixLogo.png
 INSTALL(FILES ${CMAKE_SOURCE_DIR}/fonts/mtx.ttf
         DESTINATION bin/fonts)
 
-INSTALL(FILES ${CMAKE_SOURCE_DIR}/Matrix.desktop
+INSTALL(FILES ${CMAKE_SOURCE_DIR}/com.bitscripts.matrix.desktop
         DESTINATION share/applications)
 
 INSTALL(TARGETS ${PROJECT_NAME}

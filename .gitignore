@@ -2,6 +2,7 @@
 /build/
 /.vscode/
 /cmake-build-debug/
+/.flatpak/
 /.flatpak-builder/
 /Testing/
 /com.bitscripts.matrix/
