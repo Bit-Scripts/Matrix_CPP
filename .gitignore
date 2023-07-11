@@ -3,3 +3,5 @@
 /.vscode/
 /cmake-build-debug/
 /.flatpak-builder/
+/Testing/
+/com.bitscripts.matrix/

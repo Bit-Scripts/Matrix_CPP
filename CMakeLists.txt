@@ -1,3 +1,6 @@
+set(CMAKE_C_COMPILER "/usr/bin/gcc-12")
+set(CMAKE_CXX_COMPILER "/usr/bin/g++-12")
+
 cmake_minimum_required(VERSION 3.19)
 project(Matrix)
 
@@ -5,8 +8,9 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 COMPONENTS Core Widgets Multimedia REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Multimedia)
 find_package(OpenCV 4 REQUIRED)
+
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 set(SOURCES
@@ -56,7 +60,7 @@ INSTALL(TARGETS ${PROJECT_NAME}
         LIBRARY
         DESTINATION lib)
 
-INSTALL(FILES ${CMAKE_SOURCE_DIR}/matrix-linux.png
+INSTALL(FILES ${CMAKE_SOURCE_DIR}/com.bitscripts.matrix.png
         DESTINATION bin)
 
 INSTALL(FILES ${CMAKE_SOURCE_DIR}/MatrixLogo.png

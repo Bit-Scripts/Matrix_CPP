@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>fonts/mtx.ttf</file>
-        <file>matrix-linux.png</file>
+        <file>com.bitscripts.matrix.png</file>
         <file>MatrixLogo.png</file>
     </qresource>
 </RCC>

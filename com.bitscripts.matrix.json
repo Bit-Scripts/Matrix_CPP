@@ -1,69 +1,41 @@
 {
   "app-id": "com.bitscripts.matrix",
-  "runtime": "org.freedesktop.Platform",
-  "runtime-version": "22.08",
+  "runtime": "org.kde.Platform",
+  "runtime-version": "6.2",
+  "sdk": "org.kde.Sdk",
   "arch": "x86_64",
-  "sdk": "org.freedesktop.Sdk",
   "command": "matrix",
+  "build-options": {
+    "env": {
+      "CC": "/usr/bin/gcc",
+      "CXX": "/usr/bin/g++"
+    }
+  },
   "modules": [
+    {
+      "name": "opencv",
+      "buildsystem": "cmake-ninja",
+      "builddir": true,
+      "sources": [
+          {
+              "type": "git",
+              "branch": "4.8.0",
+              "url": "https://github.com/opencv/opencv"
+          }
+      ]
+    },
     {
       "name": "Matrix",
       "buildsystem": "cmake",
       "config-opts": [
-        "-DCMAKE_BUILD_TYPE=Release"
+        "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
       ],
       "sources": [
         {
-          "type": "git",
-          "url": "https://github.com/bitscripts/Matrix.git",
-          "branch": "main"
+          "type": "archive",
+          "url": "https://github.com/Bit-Scripts/Matrix_CPP/archive/refs/tags/v1.0.2.tar.gz",
+          "sha256": "aaae4026937e3a0c39741fd54794cd6d42cd1df225f2d010e3bd6b5868071a1c"
         }
-      ],
-      "build-commands": [
-        "cd /mnt/Git_Code_Linux/Matrix CPP/build/",
-        "cmake .. -DCMAKE_INSTALL_PREFIX=com.bitscripts.matrix/",
-        "make",
-        "make install"
-      ],
-      "dependencies": [
-        "qt6-base-dev-tools",
-        "qt6-default",
-        "libqt6core6",
-        "libqt6widgets6",
-        "libqt6gui6",
-        "libqt6network6",
-        "libqt6webview6",
-        "libqt6webenginewidgets6",
-        "libqt6waylandclient6",
-        "libqt6waylandcompositor6",
-        "libqt6waylandeglclienthwintegration6",
-        "libqt6waylandeglcompositorhwintegration6",
-        "libxcb-xinerama0",
-        "libopencv-apps2d",
-        "libopencv-apps-dev",
-        "libopencv-dev",
-        "libgstreamer-opencv1.0-0",
-        "gstreamer1.0-opencv",
-        "opencv-data",
-        "ffmpeg",
-        "libavcodec58",
-        "libavdevice58",
-        "libavfilter7",
-        "libavformat58",
-        "libswscale5",
-        "libffmpeg-ocaml",
-        "libsdl-kitchensink1",
-        "libsdl-kitchensink-dev",
-        "libffmpeg-ocaml-dev",
-        "libswscale-dev",
-        "libavresample4",
-        "libavutil56",
-        "libpostproc55",
-        "gstreamer1.0-libav",
-        "libpostproc55",
-        "ffmpegthumbs",
-        "v4l2loopback-dkms",
-        "v4l2loopback-utils"
       ]
     }
   ],
@@ -74,6 +46,11 @@
     "--socket=pulseaudio",
     "--device=dri",
     "--device=/dev/video*"
+  ],
+  "cleanup": [
+    "- '/include'",
+    "- '/bin/foo-*'",
+    "- '*.a'"
   ],
   "tags": ["graphics", "multimedia"],
   "desktop-file-name": "com.bitscripts.matrix.desktop",
