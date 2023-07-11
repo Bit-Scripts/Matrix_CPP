@@ -33,8 +33,8 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://github.com/Bit-Scripts/Matrix_CPP/archive/refs/tags/v1.0.8.tar.gz",
-          "sha256": "a13b0b48fabebc724f3e51ca8747f13c05ff49f11574d29afad99984952b2d9f"
+          "url": "https://github.com/Bit-Scripts/Matrix_CPP/archive/refs/tags/v1.0.9.tar.gz",
+          "sha256": "3ed4a5f57d035303d410073439b0ba08556ac29db57bfd09f1901b4d92e133aa"
         }
       ]
     }
