@@ -4,7 +4,7 @@
   "runtime-version": "6.2",
   "sdk": "org.kde.Sdk",
   "arch": "x86_64",
-  "command": "matrix",
+  "command": "Matrix",
   "build-options": {
     "env": {
       "CC": "/usr/bin/gcc",
@@ -33,8 +33,8 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://github.com/Bit-Scripts/Matrix_CPP/archive/refs/tags/v1.0.5.tar.gz",
-          "sha256": "c40f1cbc7a4254ddbf4c3d79d3c6ec198b6a92c9d1805f6e791742e7de7481a4"
+          "url": "https://github.com/Bit-Scripts/Matrix_CPP/archive/refs/tags/v1.0.7.tar.gz",
+          "sha256": "6e9937a3f2b5c9c15a22057ac07e7646e741a99a0146c11337f7ee9af644ff69"
         }
       ]
     }
@@ -45,13 +45,12 @@
     "--socket=wayland",
     "--socket=pulseaudio",
     "--device=dri",
-    "--device=/dev/video*"
+    "--device=all"
   ],
   "cleanup": [
     "- '/include'",
     "- '/bin/foo-*'",
     "- '*.a'"
   ],
-  "tags": ["graphics", "multimedia"],
-  "rename-icon": "com.bitscripts.matrix"
+  "tags": ["graphics", "multimedia"]
 }
