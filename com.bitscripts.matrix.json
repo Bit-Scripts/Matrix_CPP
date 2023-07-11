@@ -53,6 +53,5 @@
     "- '*.a'"
   ],
   "tags": ["graphics", "multimedia"],
-  "rename-desktop-file": "com.bitscripts.matrix.desktop",
   "rename-icon": "com.bitscripts.matrix"
 }
