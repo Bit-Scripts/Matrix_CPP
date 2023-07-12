@@ -1,6 +1,6 @@
 [Desktop Entry]
 Categories=AudioVideo;
-Exec=Matrix com.bitscripts.matrix
+Exec=Matrix
 Icon=com.bitscripts.matrix.png
 Name=Matrix
 Version=1.0
