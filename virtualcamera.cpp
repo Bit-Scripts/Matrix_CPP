@@ -180,7 +180,8 @@ void VirtualCamera::configureVirtualCamera()
 
 void VirtualCamera::handleProcessOutput() {
     QProcess process;
-    process.start("v4l2-ctl", QStringList() << "--all" << "-d" << "/dev/video4");
+    QString qstr = QString::fromStdString(devicePath);
+    process.start("v4l2-ctl", QStringList() << "--all" << "-d" << qstr);
     process.waitForFinished();
     QString processOutput = process.readAllStandardOutput();
 
@@ -213,13 +214,20 @@ void VirtualCamera::handleProcessOutput() {
 
     if (width == "1280" && height == "720") {
         enabled = true;
-        QMessageBox::information(nullptr, "Configuration terminée",
-                                 "La caméra virtuelle est configurée avec succès.");
+        QMessageBox msgBoxSuccess;
+        msgBoxSuccess.setWindowIcon(iconMatrix);
+        msgBoxSuccess.setWindowTitle("Configuration terminée");
+        msgBoxSuccess.setText("La caméra virtuelle est configurée avec succès.");
+        msgBoxSuccess.setIcon(QMessageBox::Information);
+        msgBoxSuccess.exec();
         return;
     }
-    enabled = false;
-    QMessageBox::critical(nullptr, "Échec de la configuration",
-                          "La configuration de la caméra virtuelle est incorrecte. Vérifiez les dimensions de la caméra.");
+    QMessageBox msgBoxFailure;
+    msgBoxFailure.setWindowIcon(iconMatrix);
+    msgBoxFailure.setWindowTitle("Échec de la configuration");
+    msgBoxFailure.setText("La configuration de la caméra virtuelle est incorrecte. Vérifiez les dimensions de la caméra.");
+    msgBoxFailure.setIcon(QMessageBox::Critical);
+    msgBoxFailure.exec();
 }
 
 void VirtualCamera::killProcessByPath() {
