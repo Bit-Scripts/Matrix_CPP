@@ -1,5 +1,5 @@
 pkgname=Matrix_CPP
-pkgver=1.0.15
+pkgver=1.0.16
 pkgrel=1
 pkgdesc="Video processing with Matrix effect"
 arch=('x86_64')
@@ -8,7 +8,7 @@ license=('MIT')
 depends=('linux-zen-headers' 'linux-lts-headers' 'linux-hardened-headers' 'linux-headers' 'dkms' 'qt6-base' 'qt6-multimedia' 'qt6-multimedia-ffmpeg' 'qt6-multimedia-gstreamer' 'qt6-wayland' 'opencv' 'ffmpeg' 'v4l2loopback-dkms' 'v4l2loopback-utils' 'v4l-utils')
 makedepends=('cmake')
 source=("v${pkgver}.tar.gz::https://github.com/Bit-Scripts/Matrix_CPP/archive/refs/tags/v${pkgver}.tar.gz")
-sha256sums=('34bd309f6623aaeeb87bc6c99061a543b9b466e8fd8ff7a7d5764da01b5fcd5c')
+sha256sums=('aaee4fb95315500590991811b65890b9b55e182ea81b27e470510531480e0e33')
 
 build() {
   cd "${srcdir}/${pkgname}-${pkgver}"
