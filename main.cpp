@@ -11,15 +11,13 @@ int main(int argc, char *argv[]) {
     translator.load("qt_fr", QLibraryInfo::path(QLibraryInfo::TranslationsPath));
     QApplication::installTranslator(&translator);
 
-    QString appDir = QCoreApplication::applicationDirPath();
-    QIcon icon(appDir + "/com.bitscripts.matrix.png");
+    QIcon icon("/usr/bin/matrixresources/icons/Matrix.png");
 
     MainWindow mainWindow;
     mainWindow.resize(1280,720);
     mainWindow.setWindowTitle("Matrix");
     mainWindow.setWindowIcon(icon);
     mainWindow.show();
-
 
     return app.exec();
 }

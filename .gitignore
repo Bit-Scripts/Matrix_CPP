@@ -6,3 +6,5 @@
 /.flatpak-builder/
 /Testing/
 /com.bitscripts.matrix/
+/appimage/
+/CPACK/

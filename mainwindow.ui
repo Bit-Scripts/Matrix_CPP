@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>com.bitscripts.matrix.png</normaloff>com.bitscripts.matrix.png</iconset>
+    <normaloff>Matrix.png</normaloff>Matrix.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget"/>
  </widget>

@@ -3,8 +3,7 @@
 
 VirtualCamera::VirtualCamera(QObject *parent) : QObject(parent)
 {
-    QString appDir = QCoreApplication::applicationDirPath();
-    QIcon icon(appDir + "/com.bitscripts.matrix.png");
+    QIcon icon("/usr/bin/matrixresources/icons/Matrix.png");
     iconMatrix = icon;
 }
 
@@ -53,10 +52,15 @@ void VirtualCamera::setup()
 bool VirtualCamera::isV4l2LoopbackInstalled()
 {
     QProcess process;
-    process.start("dkms", QStringList() << "status");
+    process.start("sh", QStringList() << "-c" << "ls \"/lib/modules/$(uname -r)/kernel/v4l2loopback/v4l2loopback.ko\"");
     process.waitForFinished();
-    QString output = process.readAllStandardOutput();
-    return output.contains("v4l2loopback");
+    QByteArray output1 = process.readAllStandardOutput();
+    process.start("which", QStringList() << "v4l2loopback-ctl");
+    process.waitForFinished();
+    QByteArray output2 = process.readAllStandardOutput();
+    std::cout << output1.toStdString() << std::endl;
+    std::cout << output2.toStdString() << std::endl;
+    return output1.contains("v4l2loopback") && output2.contains("v4l2loopback-ctl");
 }
 
 bool VirtualCamera::isV4l2Enabled()

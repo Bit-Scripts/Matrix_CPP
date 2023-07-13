@@ -1,0 +1,8 @@
+[Desktop Entry]
+Categories=AudioVideo;
+Exec=/usr/bin/Matrix
+Icon=Matrix
+Name=Matrix
+Version=1.0
+Type=Application
+Comment=Video processing with Matrix effect
