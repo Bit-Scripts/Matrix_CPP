@@ -51,8 +51,11 @@ void VirtualCamera::setup()
 
 bool VirtualCamera::isV4l2LoopbackInstalled()
 {
+    QString kernelVersion = QString::fromLocal8Bit(qgetenv("UNAME_R"));
+    QString command = QString("find \"/lib/modules/%1\" -name *v4l2loopback*").arg(kernelVersion);
+
     QProcess process;
-    process.start("sh", QStringList() << "-c" << "ls \"/lib/modules/$(uname -r)/kernel/v4l2loopback/v4l2loopback.ko\"");
+    process.start("sh", QStringList() << "-c" << command);
     process.waitForFinished();
     QByteArray output1 = process.readAllStandardOutput();
     process.start("which", QStringList() << "v4l2loopback-ctl");
